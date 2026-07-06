@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard — BlueDocs</title>
 <meta name="description" content="Dashboard pengelolaan PDF BlueDocs: gabung, pisah, kompres, konversi, OCR, proteksi, watermark, tanda tangan, dan konversi Braille — dalam satu tempat untuk semua orang." />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Dashboard — BlueDocs" />
+<meta property="og:description" content="Gabung, pisah, kompres, konversi, OCR, proteksi, watermark, tanda tangan, dan konversi Braille — dalam satu tempat untuk semua orang." />
+<meta property="og:image" content="/assets/logo.webp" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Dashboard — BlueDocs" />
+<meta name="twitter:description" content="Gabung, pisah, kompres, konversi, OCR, proteksi, watermark, tanda tangan, dan konversi Braille — dalam satu tempat untuk semua orang." />
+<meta name="twitter:image" content="/assets/logo.webp" />
+
 <link rel="icon" type="image/webp" href="assets/logo.webp" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="css/style.css" />
@@ -15,13 +25,13 @@
 
 <header class="site-header dash-header">
   <div class="container">
-    <a href="index.html" class="brand">
+    <a href="/" class="brand">
       <img src="assets/logo.webp" alt="" class="brand-logo" />
       BlueDocs
     </a>
     <div class="header-actions">
       <span class="mode-badge">Dashboard</span>
-      <a href="index.html" class="btn btn-ghost btn-sm">Home</a>
+      <a href="/" class="btn btn-ghost btn-sm">Beranda</a>
     </div>
   </div>
 </header>
@@ -30,7 +40,7 @@
   <section class="dash-hero">
     <div class="container">
       <h1>Kelola Dokumen Anda</h1>
-      <p>Satu dashboard untuk semua orang — pilih tools di bawah untuk menggabungkan, mengonversi, mengamankan, atau mengonversi dokumen ke/dari Braille. Butuh pengaturan tampilan? Buka tombol Accessibility di pojok kanan bawah. (Mode demo.)</p>
+      <p>Satu dashboard untuk semua orang — pilih tools di bawah untuk menggabungkan, mengonversi, mengamankan, atau mengonversi dokumen ke/dari Braille. Butuh pengaturan tampilan? Buka tombol Accessibility di pojok kanan bawah.</p>
     </div>
   </section>
 
@@ -48,7 +58,7 @@
     <div class="tool-grid" id="grid-convert"></div>
 
     <div class="section-title">
-      <h2>Keamanan &amp; Finalisasi</h2>
+      <h2>Keamanan</h2>
       <p>Lindungi, tandai, dan tanda tangani dokumen Anda</p>
     </div>
     <div class="tool-grid" id="grid-security"></div>
@@ -91,8 +101,17 @@
     </div>
 
     <div class="field" id="field-password" hidden>
-      <label for="tool-password">Kata sandi</label>
-      <input type="text" id="tool-password" placeholder="Masukkan kata sandi" />
+      <label for="tool-password" id="tool-password-label">Kata sandi</label>
+      <input type="text" id="tool-password" placeholder="Masukkan kata sandi" autocomplete="off" />
+      <div class="strength-meter" id="tool-password-strength" hidden>
+        <div class="strength-track"><div class="strength-bar" id="tool-password-strength-bar"></div></div>
+        <span id="tool-password-strength-label">Kekuatan kata sandi</span>
+      </div>
+    </div>
+
+    <div class="field" id="field-confirm-password" hidden>
+      <label for="tool-confirm-password">Konfirmasi kata sandi</label>
+      <input type="text" id="tool-confirm-password" placeholder="Ulangi kata sandi" autocomplete="off" />
     </div>
 
     <div class="field" id="field-text" hidden>
@@ -118,6 +137,7 @@
       <span class="result-text" id="tool-result-text">Berhasil diproses!</span>
       <button class="btn btn-secondary btn-sm" id="tool-download-btn"><i class="fa-solid fa-download"></i> Unduh Hasil</button>
     </div>
+    <div id="tool-result-extra"></div>
 
     <div class="modal-actions">
       <button class="btn btn-primary" id="tool-process-btn">Proses Sekarang</button>
@@ -157,11 +177,84 @@
       <div class="progress-track"><div class="progress-bar" id="device-progress-bar"></div></div>
       <div class="progress-label" id="device-progress-label">Mencari perangkat...</div>
     </div>
+
+    <div class="device-list" id="device-list" aria-live="polite"></div>
+
     <div class="result-box" id="device-result-box">
       <span class="result-text" id="device-result-text">Terhubung ke perangkat!</span>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-primary" id="device-connect-btn"><i class="fa-solid fa-link"></i> Hubungkan Perangkat</button>
+      <button class="btn btn-primary" id="device-scan-btn"><i class="fa-solid fa-magnifying-glass"></i> Cari Perangkat</button>
+      <button class="btn btn-ghost" data-close-modal>Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Atur Halaman modal (drag-reorder thumbnail list; real page count via pdf-lib, reorder itself is cosmetic) -->
+<div class="modal-overlay" id="organize-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="organize-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup dialog"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="organize-modal-title">Atur Halaman</h2>
+    <p class="modal-desc">Unggah PDF, lalu seret untuk mengurutkan ulang atau hapus halaman yang tidak diperlukan.</p>
+
+    <div class="dropzone" id="organize-dropzone" tabindex="0" role="button" aria-label="Klik atau seret file PDF ke sini untuk mengunggah">
+      <strong>Klik untuk unggah</strong> atau seret file PDF ke sini
+      <div style="font-size:0.8rem;margin-top:6px;">Diproses langsung di browser Anda — tidak diunggah ke server manapun.</div>
+      <input type="file" id="organize-file-input" accept="application/pdf" />
+      <div class="file-name" id="organize-file-name"></div>
+    </div>
+
+    <div class="page-organize-list" id="organize-page-list" aria-live="polite"></div>
+
+    <div class="progress-wrap" id="organize-progress-wrap">
+      <div class="progress-track"><div class="progress-bar" id="organize-progress-bar"></div></div>
+      <div class="progress-label" id="organize-progress-label">Memproses...</div>
+    </div>
+    <div class="result-box" id="organize-result-box">
+      <span class="result-text" id="organize-result-text">Berhasil diproses!</span>
+      <button class="btn btn-secondary btn-sm" id="organize-download-btn"><i class="fa-solid fa-download"></i> Unduh Hasil</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="organize-save-btn">Simpan Perubahan</button>
+      <button class="btn btn-ghost" data-close-modal>Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tanda Tangan PDF modal (draw a real signature on canvas; PDF output itself is simulated) -->
+<div class="modal-overlay" id="sign-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sign-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup dialog"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="sign-modal-title">Tanda Tangan PDF</h2>
+    <p class="modal-desc">Unggah dokumen, gambar tanda tangan Anda, lalu terapkan ke dokumen.</p>
+
+    <div class="dropzone" id="sign-dropzone" tabindex="0" role="button" aria-label="Klik atau seret file ke sini untuk mengunggah">
+      <strong>Klik untuk unggah</strong> atau seret file ke sini
+      <div style="font-size:0.8rem;margin-top:6px;">(Simulasi — file tidak benar-benar diunggah)</div>
+      <input type="file" id="sign-file-input" />
+      <div class="file-name" id="sign-file-name"></div>
+    </div>
+
+    <div class="field signature-pad-wrap">
+      <label for="sign-canvas">Gambar tanda tangan di sini</label>
+      <canvas id="sign-canvas" class="signature-canvas" width="600" height="180" role="img" aria-label="Kanvas gambar tanda tangan, kosong"></canvas>
+      <div class="modal-actions" style="margin-top:10px;">
+        <button class="btn btn-ghost btn-sm" id="sign-clear-btn"><i class="fa-solid fa-eraser"></i> Hapus Coretan</button>
+      </div>
+    </div>
+
+    <div class="progress-wrap" id="sign-progress-wrap">
+      <div class="progress-track"><div class="progress-bar" id="sign-progress-bar"></div></div>
+      <div class="progress-label" id="sign-progress-label">Memproses...</div>
+    </div>
+    <div class="result-box" id="sign-result-box">
+      <span class="result-text" id="sign-result-text">Berhasil diproses!</span>
+      <button class="btn btn-secondary btn-sm" id="sign-download-btn"><i class="fa-solid fa-download"></i> Unduh Hasil</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="sign-apply-btn">Terapkan Tanda Tangan</button>
       <button class="btn btn-ghost" data-close-modal>Batal</button>
     </div>
   </div>
@@ -180,13 +273,10 @@
 
     <div class="a11y-panel-item">
       <div>
-        <h3>Read Aloud</h3>
-        <p>Bacakan isi halaman ini menggunakan suara.</p>
+        <h3>Pembaca Layar</h3>
+        <p>Saat aktif, elemen yang difokuskan (Tab) atau diklik akan dibacakan.</p>
       </div>
-      <div class="a11y-panel-actions">
-        <button class="btn btn-primary btn-sm" id="a11y-read-btn"><i class="fa-solid fa-play"></i> Baca</button>
-        <button class="btn btn-ghost btn-sm" id="a11y-stop-btn"><i class="fa-solid fa-stop"></i> Berhenti</button>
-      </div>
+      <button class="btn btn-secondary btn-sm" id="a11y-read-toggle" aria-pressed="false" aria-label="Aktifkan Pembaca Layar">Aktifkan</button>
     </div>
 
     <div class="a11y-panel-item">
@@ -194,7 +284,7 @@
         <h3>High Contrast Mode</h3>
         <p>Tingkatkan kontras warna untuk keterbacaan lebih baik.</p>
       </div>
-      <button class="btn btn-secondary btn-sm" id="a11y-contrast-btn" aria-pressed="false">Aktifkan</button>
+      <button class="btn btn-secondary btn-sm" id="a11y-contrast-btn" aria-pressed="false" aria-label="Aktifkan Mode Kontras Tinggi">Aktifkan</button>
     </div>
 
     <div class="a11y-panel-item">
@@ -221,7 +311,6 @@
 
 <div id="toast-region" aria-live="polite"></div>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<script src="js/main.js"></script>
-<script src="js/dashboard.js"></script>
+<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>

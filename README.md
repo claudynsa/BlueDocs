@@ -4,16 +4,30 @@ Demo landing page + dashboard pengelolaan dokumen PDF dengan pendekatan **Univer
 
 ## Struktur
 
+Kode JavaScript memakai **ES Modules native** (`<script type="module">`) — tidak perlu bundler/build step, browser modern memuat `import`/`export` langsung. Satu konsekuensinya: buka lewat server (`npx serve`, Vercel, dsb), bukan dengan membuka file HTML langsung (`file://`), karena browser memblokir import modul di bawah protokol `file://`.
+
 ```
-index.html                  Landing page: navbar, hero, features, about, contact, footer
-dashboard.html               Dashboard tunggal: semua tools PDF + konversi Braille
-css/style.css                Style dasar bersama (tombol, header, footer, modal, toast, widget Accessibility, mode kontras tinggi)
-css/landing.css               Style khusus landing page (navbar, hero, features, about, contact)
-css/dashboard.css            Style khusus dashboard (grid tools)
-js/main.js                   Utilitas bersama: toast, modal, dropzone, simulasi progress, REAL_PROCESSORS (pdf-lib),
-                              initToolModal() (kontroler modal tool generik), dan widget Accessibility mengambang
-js/dashboard.js              Katalog tools PDF + logika konversi Braille & Braille Display/Embosser
-assets/logo.webp              Logo BlueDocs (dipakai di navbar, footer, dan favicon)
+index.html                    Landing page: navbar, hero, features, about, contact, footer
+dashboard.html                 Dashboard tunggal: semua tools PDF + konversi Braille
+
+css/style.css                  Style dasar bersama (tombol, header, footer, modal, toast, widget Accessibility, mode kontras tinggi)
+css/landing.css                 Style khusus landing page (navbar, hero, features, about, contact)
+css/dashboard.css              Style khusus dashboard (grid tools, kartu, dsb.)
+
+js/main.js                     Entry point index.html: toggle navbar mobile + impor widget Accessibility
+js/dashboard.js                Entry point dashboard.html: katalog TOOLS + impor semua modul fitur
+js/tool-modal.js               initToolModal() — kontroler modal generik dipakai semua tool PDF standar
+js/accessibility-widget.js     Widget Accessibility mengambang (Read Aloud, High Contrast, Font Size)
+js/braille.js                  Kartu + modal konversi Latin/Braille dan Braille Display/Embosser
+js/organize.js                 Modal "Atur Halaman" (drag-reorder thumbnail)
+js/sign.js                     Modal "Tanda Tangan PDF" (kanvas gambar tanda tangan)
+js/pdf/processors.js           REAL_PROCESSORS (pdf-lib) + simulasi progress bar + helper file/blob
+js/utils/dom.js                Kontrol modal generik (open/close/focus-trap) + dropzone
+js/utils/toast.js              Notifikasi toast
+js/utils/speech.js             State Pembaca Layar (Web Speech API) dipakai lintas modul
+js/utils/format.js             formatBytes()
+
+assets/logo.webp               Logo BlueDocs (dipakai di navbar, footer, dan favicon)
 ```
 
 ## Prinsip aksesibilitas
@@ -37,7 +51,7 @@ Ini adalah **demo UI**, bukan produk produksi dengan backend pemrosesan file:
 
 ## Menjalankan secara lokal
 
-Buka `index.html` langsung di browser, atau jalankan server statis sederhana, misalnya:
+Karena JavaScript-nya berupa ES Modules, **harus** dijalankan lewat server statis (tidak bisa dibuka langsung sebagai file `index.html` via `file://`):
 
 ```bash
 npx serve .

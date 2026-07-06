@@ -101,13 +101,6 @@ body.high-contrast .tool-card {
 .tool-card.a11y .tool-icon { background: #eaf3ff; color: var(--blue-800); }
 .tool-card h3 { font-size: 1rem; color: var(--blue-900); }
 .tool-card p { font-size: 0.82rem; color: var(--ink-500); flex-grow: 1; }
-.tool-card .tool-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--blue-500);
-  letter-spacing: 0.03em;
-}
 
 /* ---------- Braille tool special layout ---------- */
 .braille-output {
@@ -122,3 +115,160 @@ body.high-contrast .tool-card {
   min-height: 50px;
 }
 body.high-contrast .braille-output { background: #000; border-color: #ffff00; }
+
+/* ---------- Password strength meter ---------- */
+.strength-meter {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.strength-track {
+  flex-grow: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--blue-100);
+  overflow: hidden;
+}
+.strength-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: var(--danger);
+  transition: width 180ms ease, background 180ms ease;
+}
+#tool-password-strength-label {
+  font-size: 0.78rem;
+  color: var(--ink-500);
+  white-space: nowrap;
+}
+
+/* ---------- Fake page thumbnail grid (PDF to JPG / Atur Halaman previews) ---------- */
+.fake-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.fake-thumb {
+  aspect-ratio: 3/4;
+  border: 1px solid var(--blue-200);
+  border-radius: var(--radius-sm);
+  background: var(--blue-50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--blue-600);
+  font-size: 1.2rem;
+}
+.fake-thumb span { font-size: 0.65rem; color: var(--ink-500); }
+body.high-contrast .fake-thumb { background: #000; border-color: #ffff00; color: #ffff00; }
+
+/* ---------- Compress before/after comparison ---------- */
+.compress-compare {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.compress-compare > div { text-align: center; }
+.compress-compare span { display: block; font-size: 0.75rem; color: var(--ink-500); }
+.compress-compare strong { font-size: 1rem; color: var(--blue-900); }
+.compress-compare i { color: var(--blue-400); }
+.compress-badge {
+  background: #e6f7ec;
+  color: #0f4d2b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* ---------- OCR result textarea ---------- */
+.ocr-result textarea {
+  min-height: 120px;
+  font-family: inherit;
+}
+
+/* ---------- Braille device scan list ---------- */
+.device-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.device-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--blue-200);
+  border-radius: var(--radius-sm);
+  background: var(--blue-50);
+  font-size: 0.9rem;
+  color: var(--blue-900);
+  text-align: left;
+}
+.device-item:hover { background: var(--blue-100); border-color: var(--blue-300); }
+.device-item i { color: var(--blue-600); }
+body.high-contrast .device-item { background: #000; border-color: #ffff00; color: #ffff00; }
+
+/* ---------- Signature pad (Sign PDF) ---------- */
+.signature-pad-wrap {
+  margin-top: 14px;
+}
+.signature-canvas {
+  width: 100%;
+  height: 180px;
+  border: 2px dashed var(--blue-300);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  touch-action: none;
+  cursor: crosshair;
+}
+body.high-contrast .signature-canvas { background: #000; border-color: #ffff00; }
+
+/* ---------- Organize Pages (drag-reorder thumbnail list) ---------- */
+.page-organize-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.page-organize-item {
+  position: relative;
+  aspect-ratio: 3/4;
+  border: 1px solid var(--blue-200);
+  border-radius: var(--radius-sm);
+  background: var(--blue-50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--blue-600);
+  font-size: 1.1rem;
+  cursor: grab;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+}
+.page-organize-item:active { cursor: grabbing; }
+.page-organize-item.dragging { opacity: 0.4; }
+.page-organize-item.drag-over { box-shadow: 0 0 0 2px var(--blue-500) inset; }
+.page-organize-item span { font-size: 0.68rem; color: var(--ink-500); }
+.page-organize-item .page-remove {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.9);
+  color: white;
+  font-size: 0.65rem;
+  display: grid;
+  place-items: center;
+  border: none;
+}
+body.high-contrast .page-organize-item { background: #000; border-color: #ffff00; color: #ffff00; }
