@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — BlueDocs</title>
+<meta name="description" content="Dashboard pengelolaan PDF BlueDocs: gabung, pisah, kompres, konversi, OCR, proteksi, watermark, tanda tangan, dan konversi Braille — dalam satu tempat untuk semua orang." />
+<link rel="icon" type="image/webp" href="assets/logo.webp" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+<a href="#main" class="skip-link">Lompat ke konten utama</a>
+
+<header class="site-header dash-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.webp" alt="" class="brand-logo" />
+      BlueDocs
+    </a>
+    <div class="header-actions">
+      <span class="mode-badge">Dashboard</span>
+      <a href="index.html" class="btn btn-ghost btn-sm">Home</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="dash-hero">
+    <div class="container">
+      <h1>Kelola Dokumen Anda</h1>
+      <p>Satu dashboard untuk semua orang — pilih tools di bawah untuk menggabungkan, mengonversi, mengamankan, atau mengonversi dokumen ke/dari Braille. Butuh pengaturan tampilan? Buka tombol Accessibility di pojok kanan bawah. (Mode demo.)</p>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="section-title">
+      <h2>Organisasi PDF</h2>
+      <p>Gabung, pisah, dan atur halaman dokumen</p>
+    </div>
+    <div class="tool-grid" id="grid-organize"></div>
+
+    <div class="section-title">
+      <h2>Konversi &amp; OCR</h2>
+      <p>Ubah format dokumen dan ekstrak teks dari gambar</p>
+    </div>
+    <div class="tool-grid" id="grid-convert"></div>
+
+    <div class="section-title">
+      <h2>Keamanan &amp; Finalisasi</h2>
+      <p>Lindungi, tandai, dan tanda tangani dokumen Anda</p>
+    </div>
+    <div class="tool-grid" id="grid-security"></div>
+
+    <div class="section-title">
+      <h2>Dokumen &amp; Braille</h2>
+      <p>Konversi teks ke/dari Braille dan kirim ke perangkat Braille</p>
+    </div>
+    <div class="tool-grid" id="grid-braille"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <div class="brand" style="color:white;"><img src="assets/logo.webp" alt="" class="brand-logo" /> BlueDocs</div>
+      <small>One Platform for Everyone.</small>
+    </div>
+    <small>&copy; 2026 BlueDocs. Dibuat untuk keperluan demo.</small>
+  </div>
+</footer>
+
+<!-- Generic PDF tool modal (reused for organize/convert/security/OCR tools) -->
+<div class="modal-overlay" id="tool-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="tool-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup dialog"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="tool-modal-title">Nama Tool</h2>
+    <p class="modal-desc" id="tool-modal-desc">Deskripsi tool</p>
+
+    <div class="dropzone" id="tool-dropzone" tabindex="0" role="button" aria-label="Klik atau seret file ke sini untuk mengunggah">
+      <strong>Klik untuk unggah</strong> atau seret file ke sini<span id="tool-dropzone-multi-hint"></span>
+      <div style="font-size:0.8rem;margin-top:6px;" id="tool-dropzone-hint">(Simulasi — file tidak benar-benar diunggah)</div>
+      <input type="file" id="tool-file-input" />
+      <div class="file-name" id="tool-file-name"></div>
+    </div>
+
+    <div class="field" id="field-format" hidden>
+      <label for="tool-format" id="tool-format-label">Format tujuan</label>
+      <select id="tool-format"></select>
+    </div>
+
+    <div class="field" id="field-password" hidden>
+      <label for="tool-password">Kata sandi</label>
+      <input type="text" id="tool-password" placeholder="Masukkan kata sandi" />
+    </div>
+
+    <div class="field" id="field-text" hidden>
+      <label for="tool-text" id="tool-text-label">Teks watermark</label>
+      <input type="text" id="tool-text" placeholder="Contoh: RAHASIA" />
+    </div>
+
+    <div class="field" id="field-rotate" hidden>
+      <label for="tool-rotate">Arah rotasi</label>
+      <select id="tool-rotate">
+        <option value="90">Putar 90° searah jarum jam</option>
+        <option value="180">Putar 180°</option>
+        <option value="-90">Putar 90° berlawanan jarum jam</option>
+      </select>
+    </div>
+
+    <div class="progress-wrap" id="tool-progress-wrap">
+      <div class="progress-track"><div class="progress-bar" id="tool-progress-bar"></div></div>
+      <div class="progress-label" id="tool-progress-label">Memproses...</div>
+    </div>
+
+    <div class="result-box" id="tool-result-box">
+      <span class="result-text" id="tool-result-text">Berhasil diproses!</span>
+      <button class="btn btn-secondary btn-sm" id="tool-download-btn"><i class="fa-solid fa-download"></i> Unduh Hasil</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="tool-process-btn">Proses Sekarang</button>
+      <button class="btn btn-ghost" data-close-modal>Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Braille converter modal (functional, Grade-1 mapping) -->
+<div class="modal-overlay" id="braille-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="braille-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup dialog"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="braille-modal-title">Konversi Latin ⇄ Braille</h2>
+    <p class="modal-desc" id="braille-modal-desc">Ketik teks Latin untuk melihat hasil konversi Braille (Grade 1), atau sebaliknya.</p>
+    <div class="field">
+      <label for="braille-input" id="braille-input-label">Teks Latin</label>
+      <textarea id="braille-input" data-autofocus placeholder="Ketik teks di sini..."></textarea>
+    </div>
+    <div class="field">
+      <label id="braille-output-label">Hasil Konversi</label>
+      <div class="braille-output" id="braille-output" aria-live="polite"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" id="braille-swap"><i class="fa-solid fa-right-left"></i> Tukar Arah Konversi</button>
+      <button class="btn btn-primary" id="braille-download"><i class="fa-solid fa-download"></i> Ekspor untuk Embosser / Braille Display</button>
+    </div>
+  </div>
+</div>
+
+<!-- Braille Display device modal (simulated hardware connection) -->
+<div class="modal-overlay" id="device-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="device-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup dialog"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="device-modal-title"><i class="fa-solid fa-print" aria-hidden="true"></i> Integrasi Braille Display / Embosser</h2>
+    <p class="modal-desc">Hubungkan perangkat Braille Display atau Braille Embosser untuk membaca dan mencetak dokumen secara langsung. (Simulasi koneksi perangkat.)</p>
+    <div class="progress-wrap" id="device-progress-wrap">
+      <div class="progress-track"><div class="progress-bar" id="device-progress-bar"></div></div>
+      <div class="progress-label" id="device-progress-label">Mencari perangkat...</div>
+    </div>
+    <div class="result-box" id="device-result-box">
+      <span class="result-text" id="device-result-text">Terhubung ke perangkat!</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="device-connect-btn"><i class="fa-solid fa-link"></i> Hubungkan Perangkat</button>
+      <button class="btn btn-ghost" data-close-modal>Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Accessibility button + panel (shared across pages) -->
+<button class="a11y-fab" id="a11y-fab" aria-haspopup="dialog" aria-controls="a11y-modal-overlay" aria-label="Buka pengaturan aksesibilitas">
+  <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+</button>
+
+<div class="modal-overlay" id="a11y-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="a11y-modal-title" aria-hidden="true">
+  <div class="modal">
+    <button class="modal-close" data-close-modal aria-label="Tutup panel aksesibilitas"><i class="fa-solid fa-xmark"></i></button>
+    <h2 id="a11y-modal-title"><i class="fa-solid fa-universal-access" aria-hidden="true"></i> Accessibility</h2>
+    <p class="modal-desc">Sesuaikan tampilan dan cara Anda menjelajahi BlueDocs.</p>
+
+    <div class="a11y-panel-item">
+      <div>
+        <h3>Read Aloud</h3>
+        <p>Bacakan isi halaman ini menggunakan suara.</p>
+      </div>
+      <div class="a11y-panel-actions">
+        <button class="btn btn-primary btn-sm" id="a11y-read-btn"><i class="fa-solid fa-play"></i> Baca</button>
+        <button class="btn btn-ghost btn-sm" id="a11y-stop-btn"><i class="fa-solid fa-stop"></i> Berhenti</button>
+      </div>
+    </div>
+
+    <div class="a11y-panel-item">
+      <div>
+        <h3>High Contrast Mode</h3>
+        <p>Tingkatkan kontras warna untuk keterbacaan lebih baik.</p>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="a11y-contrast-btn" aria-pressed="false">Aktifkan</button>
+    </div>
+
+    <div class="a11y-panel-item">
+      <div>
+        <h3>Font Size</h3>
+        <p>Perbesar atau perkecil ukuran huruf di seluruh halaman.</p>
+      </div>
+      <div class="a11y-panel-actions">
+        <button class="a11y-btn" id="a11y-font-dec" aria-label="Perkecil ukuran huruf">A−</button>
+        <button class="a11y-btn" id="a11y-font-reset" aria-label="Ukuran huruf normal">A</button>
+        <button class="a11y-btn" id="a11y-font-inc" aria-label="Perbesar ukuran huruf">A+</button>
+      </div>
+    </div>
+
+    <div class="a11y-panel-item">
+      <div>
+        <h3>Keyboard Navigation</h3>
+        <p>Seluruh menu dan tombol di BlueDocs dapat diakses tanpa mouse.</p>
+        <span class="kbd-hint-dark">Gunakan <kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> untuk berpindah, <kbd>Enter</kbd> atau <kbd>Space</kbd> untuk memilih, dan <kbd>Esc</kbd> untuk menutup panel ini.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-region" aria-live="polite"></div>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

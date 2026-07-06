@@ -1,0 +1,124 @@
+/* ===========================================================
+   BlueDocs — Dashboard shared styles
+   =========================================================== */
+
+.dash-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--blue-100);
+}
+
+.mode-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--blue-100);
+  color: var(--blue-700);
+}
+
+.dash-hero {
+  padding: 34px 0 10px;
+}
+.dash-hero h1 {
+  color: var(--blue-900);
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 700;
+}
+.dash-hero p {
+  color: var(--ink-500);
+  margin-top: 8px;
+  max-width: 640px;
+}
+
+/* High contrast theme (dashboard-specific elements; base rules live in style.css) */
+body.high-contrast .dash-header { background: #000000; border-color: #ffff00; }
+body.high-contrast .dash-hero h1,
+body.high-contrast .section-title h2,
+body.high-contrast .tool-card h3 { color: #ffff00; }
+body.high-contrast .dash-hero p,
+body.high-contrast .tool-card p,
+body.high-contrast .section-title p { color: #ffffff; }
+body.high-contrast .tool-card {
+  background: #000000;
+  border: 2px solid #ffff00;
+  color: #ffffff;
+}
+
+/* ---------- Tool grid ---------- */
+.section-title {
+  margin-top: 46px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.section-title h2 {
+  font-size: 1.3rem;
+  color: var(--blue-900);
+}
+.section-title p { color: var(--ink-500); font-size: 0.88rem; }
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+@media (max-width: 1024px) { .tool-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 460px) { .tool-grid { grid-template-columns: 1fr; } }
+
+.tool-card {
+  background: var(--white);
+  border: 1px solid var(--blue-100);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--blue-300);
+}
+.tool-card .tool-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--blue-100);
+  color: var(--blue-700);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+}
+.tool-card.a11y .tool-icon { background: #eaf3ff; color: var(--blue-800); }
+.tool-card h3 { font-size: 1rem; color: var(--blue-900); }
+.tool-card p { font-size: 0.82rem; color: var(--ink-500); flex-grow: 1; }
+.tool-card .tool-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--blue-500);
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Braille tool special layout ---------- */
+.braille-output {
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--blue-50);
+  border: 1px solid var(--blue-200);
+  border-radius: var(--radius-md);
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  word-break: break-word;
+  min-height: 50px;
+}
+body.high-contrast .braille-output { background: #000; border-color: #ffff00; }
